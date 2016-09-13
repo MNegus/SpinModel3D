@@ -151,7 +151,7 @@ def save_model_results(parent_dir, save_dir_name, spins_list):
 
 class SpinModel(object):
     'Class for creating the model of a 3D lattice of 3D spins'
-    def __init__(self, boundary, param_array,
+    def __init__(self,  param_array, boundary='zero',
                  basis_vectors=CUBIC_BASIS_VECTORS):
         '''
         Input parameters required to create the model:
@@ -165,55 +165,58 @@ class SpinModel(object):
         self.basis_vectors = basis_vectors
 
         # Defining the Pyomo model
-        self.model = ConcreteModel()
+        self.pyomo_model = ConcreteModel()
 
         # =====================================================================
         # Storing parameters as model objects
         # =====================================================================
-        self.model.boundary = boundary
+        self.pyomo_model.boundary = boundary
 
-        self.model.param_array = param_array
+        self.pyomo_model.param_array = param_array
 
         # =====================================================================
         # Derived objects from the parameters
         # =====================================================================
         # The number of points in the i, j and k directions in grid space
-        self.model.grid_i_no = param_array.shape[0]
-        self.model.grid_j_no = param_array.shape[1]
-        self.model.grid_k_no = param_array.shape[2]
+        self.pyomo_model.grid_i_no = param_array.shape[0]
+        self.pyomo_model.grid_j_no = param_array.shape[1]
+        self.pyomo_model.grid_k_no = param_array.shape[2]
 
         # Creates an array of all the coordinates in the grid
-        self.model.coord_array = np.array([param_shell.centre
-                                           for param_shell
-                                           in param_array.flatten()])
+        self.pyomo_model.coord_array = np.array([param_shell.centre
+                                                 for param_shell
+                                                 in param_array.flatten()])
 
         # Ranges for the grid points
-        self.model.grid_i_points = RangeSet(0, self.model.grid_i_no - 1)
-        self.model.grid_j_points = RangeSet(0, self.model.grid_j_no - 1)
-        self.model.grid_k_points = RangeSet(0, self.model.grid_k_no - 1)
+        self.pyomo_model.grid_i_points =\
+            RangeSet(0, self.pyomo_model.grid_i_no - 1)
+        self.pyomo_model.grid_j_points =\
+            RangeSet(0, self.pyomo_model.grid_j_no - 1)
+        self.pyomo_model.grid_k_points =\
+            RangeSet(0, self.pyomo_model.grid_k_no - 1)
 
         # Variables for the azimuth and polar angles of the spins
-        self.model.azi = Var(self.model.grid_i_points,
-                             self.model.grid_j_points,
-                             self.model.grid_k_points,
-                             domain=Reals,
-                             bounds=(0.0, 2 * np.pi),
-                             initialize=_init_rule_azi)
+        self.pyomo_model.azi = Var(self.pyomo_model.grid_i_points,
+                                   self.pyomo_model.grid_j_points,
+                                   self.pyomo_model.grid_k_points,
+                                   domain=Reals,
+                                   bounds=(0.0, 2 * np.pi),
+                                   initialize=_init_rule_azi)
 
-        self.model.pol = Var(self.model.grid_i_points,
-                             self.model.grid_j_points,
-                             self.model.grid_k_points,
-                             domain=Reals,
-                             bounds=(0.0, np.pi),
-                             initialize=_init_rule_pol)
+        self.pyomo_model.pol = Var(self.pyomo_model.grid_i_points,
+                                   self.pyomo_model.grid_j_points,
+                                   self.pyomo_model.grid_k_points,
+                                   domain=Reals,
+                                   bounds=(0.0, np.pi),
+                                   initialize=_init_rule_pol)
 
         # Objective function to minimize
-        self.model.OBJ = Objective(rule=_hamiltonian, sense=minimize)
+        self.pyomo_model.OBJ = Objective(rule=_hamiltonian, sense=minimize)
 
         # Creates the results variables
-        self.results_array_azi = np.zeros((value(self.model.grid_i_no),
-                                           value(self.model.grid_j_no),
-                                           value(self.model.grid_k_no)))
+        self.results_array_azi = np.zeros((value(self.pyomo_model.grid_i_no),
+                                           value(self.pyomo_model.grid_j_no),
+                                           value(self.pyomo_model.grid_k_no)))
         self.results_array_pol = np.copy(self.results_array_azi)
         self.results_obj = 0.0
 
@@ -221,18 +224,20 @@ class SpinModel(object):
         'Solves the given problem using the ipopt solver'
         # Solves the model
         opt = SolverFactory("ipopt")
-        opt.solve(self.model)
+        opt.solve(self.pyomo_model)
 
-        for input_coord in self.model.coord_array:
+        for input_coord in self.pyomo_model.coord_array:
             i, j, k = input_coord.i, input_coord.j, input_coord.k
-            self.results_array_azi[i, j, k] = value(self.model.azi[i, j, k])
-            self.results_array_pol[i, j, k] = value(self.model.pol[i, j, k])
+            self.results_array_azi[i, j, k] =\
+                value(self.pyomo_model.azi[i, j, k])
+            self.results_array_pol[i, j, k] =\
+                value(self.pyomo_model.pol[i, j, k])
 
-        self.results_obj = value(self.model.OBJ)
+        self.results_obj = value(self.pyomo_model.OBJ)
 
     def get_model_results(self):
         'Returns arrays containing the positions and components of the spins'
-        coord_array = self.model.coord_array  # To reduce length of lines
+        coord_array = self.pyomo_model.coord_array  # To reduce length of lines
 
         # Arrays to store x, y and z positions of the spins
         x_pos, y_pos, z_pos = [], [], []
@@ -255,7 +260,7 @@ class SpinModel(object):
 
         # Fills the spin component arrays
         for index, coord in enumerate(coord_array):
-            spin = _get_spin(self.model, coord)
+            spin = _get_spin(self.pyomo_model, coord)
             x_spin_comps[index] = value(spin.x)
             y_spin_comps[index] = value(spin.y)
             z_spin_comps[index] = value(spin.z)

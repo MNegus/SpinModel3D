@@ -49,7 +49,7 @@ def skyrmion_model(grid_dimen):
     #  Converts to a numpy array
     param_array = np.array(param_array_list)
 
-    return SpinModel('zero', param_array, basis_vectors=HEX_BASIS_VECTORS)
+    return SpinModel(param_array, basis_vectors=HEX_BASIS_VECTORS)
 
 
 def febo3_model(grid_dimen, mag_vector=ZERO_VECTOR):
@@ -62,9 +62,6 @@ def febo3_model(grid_dimen, mag_vector=ZERO_VECTOR):
                      (1 / 6) * Z_UNIT)
     param_array_list = []  # List to store shells around each spin
 
-    init_spin_1 = Spin(random() * 2 * np.pi, random() * np.pi)
-    init_spin_2 = Spin(random() * 2 * np.pi, random() * np.pi)
-
     #  Creates list of shells for parameters
     for i in range(grid_dimen[0]):
         i_row = []
@@ -72,17 +69,11 @@ def febo3_model(grid_dimen, mag_vector=ZERO_VECTOR):
             j_row = []
             for k in range(grid_dimen[2]):
                 #  Shell for coordinate (i, j, k)
-                shell = None
-                if j < grid_dimen[1] % 2:
-                    shell = Shell(GridCoord(i, j, k),
-                                  initial_spin=init_spin_1,
-                                  aniso_term=(-500, Z_UNIT),
-                                  mag_vector=mag_vector)
-                else:
-                    shell = Shell(GridCoord(i, j, k),
-                                  initial_spin=init_spin_2,
-                                  aniso_term=(-500, Z_UNIT),
-                                  mag_vector=mag_vector)
+                shell = Shell(GridCoord(i, j, k),
+                              initial_spin=Spin(0.0,
+                                                0.0),
+                              aniso_term=(-100, Z_UNIT),
+                              mag_vector=mag_vector)
 
                 #  Coupling for spins below
                 shell.add_coupling(GridCoord(i, j, k - 1),
@@ -110,7 +101,7 @@ def febo3_model(grid_dimen, mag_vector=ZERO_VECTOR):
                 shell.add_coupling(GridCoord(i, j - 1, k + 1),
                                    spin_coup_term=-10.3,
                                    dm_vector=-PyomoVector(cart_comp=(-0, -0,
-                                                                     -0.5)))
+                                                                             -0.5)))
                 j_row.append(shell)
             i_row.append(j_row)
         param_array_list.append(i_row)
@@ -118,7 +109,7 @@ def febo3_model(grid_dimen, mag_vector=ZERO_VECTOR):
     #  Converts to a numpy array
     param_array = np.array(param_array_list)
 
-    return SpinModel('zero', param_array, basis_vectors=basis_vectors)
+    return SpinModel(param_array, basis_vectors=basis_vectors)
 
 
 def simple_cubic_model(grid_dimen, spin_coup_term=1.0, mag_vector=ZERO_VECTOR):
@@ -150,4 +141,4 @@ def simple_cubic_model(grid_dimen, spin_coup_term=1.0, mag_vector=ZERO_VECTOR):
     # Converts to a numpy array
     param_array = np.array(param_array_list)
 
-    return SpinModel('zero', param_array)
+    return SpinModel(param_array)

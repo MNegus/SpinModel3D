@@ -15,23 +15,6 @@ class GridCoord(object):
             + abs(self.j - grid_coord.j)\
             + abs(self.k - grid_coord.k)
 
-    def in_list(self, coord_list):
-        '''Returns True if a self is already in a list'''
-        for coord in coord_list:
-            if self == coord:
-                return True
-        return False
-
-    def get_coord_in_list(self, coord_list):
-        '''Returns the instance of GridCoord in a given list that has the same
-        values as self. If self is not in the list, it returns self'''
-        if self.in_list:
-            for coord in coord_list:
-                if coord == self:
-                    return coord
-        else:
-            return self
-
     def to_tuple(self):
         'Converts to a tuple'
         return (self.i, self.j, self.k)

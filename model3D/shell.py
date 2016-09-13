@@ -23,8 +23,7 @@ class Shell(object):
         self.dm_vector_dict = {}  # Dict for the DM-vector when coupling with
                                   # each coord
 
-    def add_coupling(self, coord, spin_coup_term=0.0,
-                     dm_vector=PyomoVector(cart_comp=(0.0, 0.0, 0.0))):
+    def add_coupling(self, coord, spin_coup_term=0.0, dm_vector=ZERO_VECTOR):
         '''Adds a coordinate of a spin and coupling terms for the centre spin
         to interact with'''
         if coord in self.coord_list:
