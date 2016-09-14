@@ -3,7 +3,7 @@ A Python package for modelling a three-dimensional lattice of interacting spins.
 
 The package uses mathematical optimisation software to create the models, expressing the physics problem in terms of an objective function to be minimised. The model of the spins follows closely to what the Classical Heisenberg model does.
 
-The documentation for the code is contained in the "" file.
+The documentation for the code is contained in the Code_documentation.pdf file.
 
 ## Dependencies
 * Python 2.7.
