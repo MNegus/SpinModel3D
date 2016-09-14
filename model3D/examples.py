@@ -39,7 +39,7 @@ def skyrmion_model(grid_dimen):
             for coord in nbr_list:
                 nbr_vector = coord_to_vector(HEX_BASIS_VECTORS, coord)
                 unit_path_vector = (nbr_vector - pos_vector).normalise(1)
-                dm_vector = 1.0 * Z_UNIT.vector_product(unit_path_vector)
+                dm_vector = Z_UNIT.vector_product(unit_path_vector)
                 shell.add_coupling(coord, spin_coup_term=1.0,
                                    dm_vector=dm_vector)
 
@@ -78,7 +78,7 @@ def febo3_model(grid_dimen, mag_vector=ZERO_VECTOR):
                 #  Coupling for spins below
                 shell.add_coupling(GridCoord(i, j, k - 1),
                                    spin_coup_term=-10.3,
-                                   dm_vector=PyomoVector(cart_comp=(0, -0,
+                                   dm_vector=PyomoVector(cart_comp=(0, 0,
                                                                     -0.5)))
                 shell.add_coupling(GridCoord(i + 1, j, k - 1),
                                    spin_coup_term=-10.3,
@@ -86,7 +86,7 @@ def febo3_model(grid_dimen, mag_vector=ZERO_VECTOR):
                                                                     -0.5)))
                 shell.add_coupling(GridCoord(i, j + 1, k - 1),
                                    spin_coup_term=-10.3,
-                                   dm_vector=PyomoVector(cart_comp=(-0, 0,
+                                   dm_vector=PyomoVector(cart_comp=(0, 0,
                                                                     -0.5)))
 
                 #  Coupling for spins above
@@ -96,12 +96,12 @@ def febo3_model(grid_dimen, mag_vector=ZERO_VECTOR):
                                                                      -0.5)))
                 shell.add_coupling(GridCoord(i - 1, j, k + 1),
                                    spin_coup_term=-10.3,
-                                   dm_vector=-PyomoVector(cart_comp=(0, -0,
+                                   dm_vector=-PyomoVector(cart_comp=(0, 0,
                                                                      -0.5)))
                 shell.add_coupling(GridCoord(i, j - 1, k + 1),
                                    spin_coup_term=-10.3,
-                                   dm_vector=-PyomoVector(cart_comp=(-0, -0,
-                                                                             -0.5)))
+                                   dm_vector=-PyomoVector(cart_comp=(0, 0,
+                                                                     -0.5)))
                 j_row.append(shell)
             i_row.append(j_row)
         param_array_list.append(i_row)
