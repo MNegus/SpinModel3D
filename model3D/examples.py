@@ -62,18 +62,27 @@ def febo3_model(grid_dimen, mag_vector=ZERO_VECTOR):
                      (1 / 6) * Z_UNIT)
     param_array_list = []  # List to store shells around each spin
 
+    # Initial spin vectors
+    init_spin_1 = Spin(random() * 2 * np.pi, random() * np.pi)
+    init_spin_2 = Spin(random() * 2 * np.pi, random() * np.pi)
+
     #  Creates list of shells for parameters
     for i in range(grid_dimen[0]):
         i_row = []
         for j in range(grid_dimen[1]):
             j_row = []
             for k in range(grid_dimen[2]):
-                #  Shell for coordinate (i, j, k)
-                shell = Shell(GridCoord(i, j, k),
-                              initial_spin=Spin(0.0,
-                                                0.0),
-                              aniso_term=(-100, Z_UNIT),
-                              mag_vector=mag_vector)
+                shell = None
+                if j < grid_dimen[1] % 2:
+                    shell = Shell(GridCoord(i, j, k),
+                                  initial_spin=init_spin_1,
+                                  aniso_term=(-100, Z_UNIT),
+                                  mag_vector=mag_vector)
+                else:
+                    shell = Shell(GridCoord(i, j, k),
+                                  initial_spin=init_spin_2,
+                                  aniso_term=(-100, Z_UNIT),
+                                  mag_vector=mag_vector)
 
                 #  Coupling for spins below
                 shell.add_coupling(GridCoord(i, j, k - 1),
