@@ -8,7 +8,7 @@ from pyomo.environ import Var, Objective, value, ConcreteModel, RangeSet, \
 from pyomo.opt import SolverFactory
 import numpy as np
 
-from model3D.vectors import PyomoVector, Spin, CUBIC_BASIS_VECTORS
+from model3D.vectors import PyomoVector, Spin, CUBIC_BASIS_VECTORS, ZERO_VECTOR
 from model3D.grid import GridCoord
 from model3D.plotting import plot_spin_model, SpinColors
 
@@ -270,10 +270,10 @@ class SpinModel(object):
 
     def plot(self, spin_colors=SpinColors.plain, plot_points=True,
              x_limits=(-np.inf, np.inf), y_limits=(-np.inf, np.inf),
-             z_limits=(-np.inf, np.inf)):
+             z_limits=(-np.inf, np.inf), mag_vector=ZERO_VECTOR):
         'Passes the required data to lattice_3D_plot for plotting'
         spin_results = self.get_model_results()
         plot_spin_model(spin_results[0], spin_results[1],
                         spin_colors=spin_colors, plot_points=plot_points,
                         x_limits=x_limits, y_limits=y_limits,
-                        z_limits=z_limits)
+                        z_limits=z_limits, mag_vector=mag_vector)

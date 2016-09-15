@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 
+from model3D.vectors import ZERO_VECTOR, value
+
 
 class SpinColors(Enum):
     'Enum class for the different color schemes for the spins'
@@ -17,7 +19,7 @@ class SpinColors(Enum):
 def plot_spin_model(input_pos_arrays, input_comps_arrays,
                     spin_colors=SpinColors.plain, plot_points=True,
                     x_limits=(-np.inf, np.inf), y_limits=(-np.inf, np.inf),
-                    z_limits=(-np.inf, np.inf)):
+                    z_limits=(-np.inf, np.inf), mag_vector=ZERO_VECTOR):
     'Plots the spins of a given SpinModel object'
     # Creates figure and axes
     fig = plt.figure()
@@ -53,6 +55,7 @@ def plot_spin_model(input_pos_arrays, input_comps_arrays,
         # axes.scatter(x_pos[::2], y_pos[::2], z_pos[::2], color='red')
         # axes.scatter(x_pos[1::2], y_pos[1::2], z_pos[1::2], color='green')
 
+    # Plots the spin vectors
     if spin_colors == SpinColors.plain:
         # All the spins are plotted with the same colour'
         axes.quiver(x_pos, y_pos, z_pos,
@@ -95,6 +98,12 @@ def plot_spin_model(input_pos_arrays, input_comps_arrays,
     axes.set_ylim(y_pos.mean() - max_range, y_pos.mean() + max_range)
     axes.set_zlim(z_pos.mean() - max_range, z_pos.mean() + max_range)
 
+    # Draws the magnetic field vector
+    axes.quiver([x_pos.mean()], [y_pos.mean()], [z_pos.max()],
+                [value(mag_vector.x)], [value(mag_vector.y)],
+                [value(mag_vector.z)], length=1000.0, arrow_length_ratio=100,
+                pivot='tail', linewidth=3.0)
+
     # Setting axis labels
     axes.set_xlabel('x')
     axes.set_ylabel('y')
@@ -105,7 +114,7 @@ def plot_spin_model(input_pos_arrays, input_comps_arrays,
 
 def plot_saved_model(save_dir, spin_colors=SpinColors.plain, plot_points=True,
                      x_limits=(-np.inf, np.inf), y_limits=(-np.inf, np.inf),
-                     z_limits=(-np.inf, np.inf)):
+                     z_limits=(-np.inf, np.inf), mag_vector=ZERO_VECTOR):
     'Plots the results that are saved in save_dir'
     load_pos_arrays, load_comps_arrays = [], []
     # Gets the results to save into the directory
@@ -118,4 +127,5 @@ def plot_saved_model(save_dir, spin_colors=SpinColors.plain, plot_points=True,
 
     plot_spin_model(load_pos_arrays, load_comps_arrays,
                     spin_colors=spin_colors, plot_points=plot_points,
-                    x_limits=x_limits, y_limits=y_limits, z_limits=z_limits)
+                    x_limits=x_limits, y_limits=y_limits, z_limits=z_limits,
+                    mag_vector=mag_vector)
