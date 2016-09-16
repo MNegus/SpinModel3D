@@ -99,10 +99,11 @@ def plot_spin_model(input_pos_arrays, input_comps_arrays,
     axes.set_zlim(z_pos.mean() - max_range, z_pos.mean() + max_range)
 
     # Draws the magnetic field vector
-    axes.quiver([x_pos.mean()], [y_pos.mean()], [z_pos.max()],
-                [value(mag_vector.x)], [value(mag_vector.y)],
-                [value(mag_vector.z)], length=1000.0, arrow_length_ratio=100,
-                pivot='tail', linewidth=3.0)
+    axes.quiver([x_pos.mean()], [y_pos.mean()],
+                [z_pos.max() + 0.1 * max_range], [value(mag_vector.x)],
+                [value(mag_vector.y)], [value(mag_vector.z)],
+                length=0.5 * max_range, arrow_length_ratio=0.3, pivot='tail',
+                linewidth=3.0)
 
     # Setting axis labels
     axes.set_xlabel('x')
